@@ -1,9 +1,11 @@
 # Importações
     # Bibliotécas de manipulação de dados
+
 import pandas as pd
 import numpy as np
 
     # Bibliotécas de visualização
+
 import matplotlib.pyplot as plt
 import seaborn as sns 
 import plotly.express as px 
@@ -12,11 +14,13 @@ from plotly.subplots import make_subplots
 import missingno
 
     # Bibliotécas de estatística 
+
 import scipy
 from scipy.stats import normaltest
 from scipy.stats import chi2_contingency
 
     # Bibliotécas de engenharia de atributos
+
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, LabelEncoder, OrdinalEncoder
@@ -29,7 +33,9 @@ import sys
 import warnings
 if not sys.warnoptions:
     warnings.simplefilter("ignore")
+
     # Carregando os dados
+
 df = pd.read_csv("dataset/aug_train.csv")
 
 
@@ -42,15 +48,19 @@ print(df.info())
 # Análise exploratória dos dados
 
     # Dados não numéricos 
+
 print(df.describe(include = object))
 
     # Dados numéricos
+
 print(df.describe().drop(columns = ['enrollee_id', 'target']))
 
     # Variáveis categóricas
+
 print(list(df.columns.values)[3:12])
 
 # Plotagem
+
 plt.figure(figsize= (18,30))
 column_list = list(df.columns.values)[3:12]
 
@@ -70,6 +80,7 @@ plt.tight_layout(h_pad = 2)
 plt.show()
 
 # Distribuição das variáveis numéricas
+
 print(df.describe().drop(columns = ['enrollee_id', 'target']))
 plt.figure(figsize = (17,12))
 plt.subplot(221)
@@ -89,6 +100,7 @@ plt.show()
 
 
 # Teste de Normalidade da Distribuição
+
 numerical_feature = ['city_development_index', 'training_hours']
 
 for i in numerical_feature:
@@ -127,6 +139,7 @@ correlation_matrix = df_corr.corr(method="spearman")
 print(correlation_matrix)
 
 # Heatmap
+
 plt.figure(figsize = (7,7))
 sns.heatmap(correlation_matrix, annot=True, cmap="YlGnBu")
 plt.title("Mapa de Correlação das Variáveis Numéricas\n", fontsize = 15)
@@ -197,9 +210,11 @@ if df.isna().any(axis = None):
 plt.show()
 
 # Checando valores duplicados
+
 df['enrollee_id'].duplicated().sum()
 
 # Identificando Dados Desbalanceados
+
 plt.figure(figsize = (17,(100)/ 20))
 
 plt.subplot(121)
@@ -226,6 +241,7 @@ for p in ax.patches:
 plt.show()
 
 # Tratando Valores Ausentes
+
 print(df.columns)
 colunas_manter =['city_development_index',
                  'experience',
@@ -241,6 +257,7 @@ print(new_df.head())
 print(df.head())
 
 # Valores ausentes por coluna
+
 null_df = new_df.isna().sum().reset_index()
 
 ax = plt.figure(figsize = (15,6))
@@ -265,19 +282,24 @@ plt.title("Valores Ausentes da Variável major_discipline Antes do Processamento
 plt.show()
 
 #Relação entre major_discipline e education_level
+
 print('\nTotal de Valores Ausentes na Variável major_discipline: ', new_df['major_discipline'].isna().sum())
 print('\nProporção de Valores Ausentes na Variável education_level: ') 
 new_df[new_df['major_discipline'].isna()]['education_level'].value_counts(dropna = False)
 
+# Preparando o índice
+
 nan_index = (new_df[(new_df['major_discipline'].isna()) & ((new_df['education_level'] == 'High School') | (new_df['education_level'].isna()) | (new_df['education_level'] == 'Primary School'))]).index
 print(len(nan_index))
 
-# Colocando Valor Ausente
+# Preenchendo Valores Ausentes
+
 new_df['major_discipline'][nan_index] = 'Non Degree'
 print('Total de Valores Ausentes na Variável major_discipline: ', new_df['major_discipline'].isna().sum())
 new_df['major_discipline'].value_counts(dropna = False)
 
-#Valores Ausentes da Variável Após do Processamento
+# Valores Ausentes da Variável Após do Processamento
+
 sns.countplot(data = new_df.fillna('NaN'), x = 'major_discipline', alpha = 0.7, edgecolor = 'black')
 sns.despine()
 plt.xticks(rotation=45)
@@ -287,3 +309,92 @@ for p in ax.patches:
     ax.annotate(f'\n{p.get_height()}', (p.get_x()+0.4, p.get_height()), ha = 'center', color = 'black', size = 10)
 plt.title(" Valores Ausentes da Variável major_discipline Após o Processamento\n", fontsize = 15)
 plt.show()
+
+print(new_df.head())
+
+# Variável enrolled_university
+
+sns.countplot(data = new_df.fillna('NaN'), x = 'enrolled_university', alpha = 0.7, edgecolor = 'black')
+sns.despine()
+plt.xticks()
+bound=ax.get_xbound()
+ax=plt.gca()
+for p in ax.patches:
+    ax.annotate(f'\n{p.get_height()}', (p.get_x()+0.4, p.get_height()), ha = 'center', color = 'black', size = 10)
+plt.title("Valores Ausentes da Variável enrolled_university Antes do Processamento\n", fontsize = 15)
+plt.show()
+
+print('\nTotal de Valores Ausentes na Variável enrolled_university:', new_df['enrolled_university'].isna().sum())
+print('\nProporção de Valores Ausentes na Variável education_level:')
+new_df[new_df['enrolled_university'].isna()]['education_level'].value_counts(dropna = False)
+
+# Preparando o índice
+nan_index = (new_df[(new_df['enrolled_university'].isna()) & (new_df['education_level']=='Primary School')]).index
+
+len(nan_index)
+
+# Preenchendo Valores Ausentes
+new_df['enrolled_university'][nan_index] = 'Primary Grad'
+
+print('Total de Valores Ausentes:', new_df['enrolled_university'].isna().sum())
+new_df[new_df['enrolled_university'].isna()]['education_level'].value_counts(dropna = False)
+
+# Preparando o índice
+nan_index = new_df[(new_df['enrolled_university'].isna())].index
+
+# O restante coloco como 'Other'
+new_df['enrolled_university'][nan_index] = 'Other'
+
+sns.countplot(data = new_df.fillna('NaN'), x = 'enrolled_university', alpha = 0.7, edgecolor = 'black')
+sns.despine()
+plt.xticks()
+bound=ax.get_xbound()
+ax=plt.gca()
+for p in ax.patches:
+    ax.annotate(f'\n{p.get_height()}', (p.get_x()+0.4, p.get_height()), ha = 'center', color = 'black', size = 10)
+plt.title("Valores Ausentes da Variável enrolled_university Após o Processamento\n", fontsize = 15)
+plt.show()
+
+print(new_df.head())
+
+# Variável company_type
+
+plt.figure(figsize = (20, 20))
+column_list = ['company_type']
+A = 0
+for i in column_list:
+    A+=1
+    plt.subplot(4,2,A)
+    ax = sns.countplot(data = new_df.fillna('NaN'), x = i, alpha = 0.7, edgecolor = 'black')
+    sns.despine() 
+    plt.title(i, fontsize = 15)
+    for p in ax.patches:
+        ax.annotate(f'\n{p.get_height()}', (p.get_x()+0.4, p.get_height()), ha = 'center', color = 'black', size = 12)
+    if A >=0:
+        plt.xticks(rotation = 45)
+plt.show()
+
+new_df['company_type'].value_counts(dropna = False)
+
+# Preparando o Índice
+nan_index = new_df[(new_df['company_type'].isna())].index
+
+# Preenchendo valores NaN com 'Other'
+new_df['company_type'][nan_index] = 'Other'
+
+plt.figure(figsize = (20, 20))
+column_list = ['company_type']
+A = 0
+for i in column_list:
+    A+=1
+    plt.subplot(4,2,A)
+    ax = sns.countplot(data = new_df.fillna('NaN'), x = i, alpha = 0.7, edgecolor = 'black')
+    sns.despine() 
+    plt.title(i, fontsize = 15)
+    for p in ax.patches:
+        ax.annotate(f'\n{p.get_height()}', (p.get_x()+0.4, p.get_height()), ha = 'center', color = 'black', size = 12)
+    if A >=0:
+        plt.xticks(rotation = 45)
+plt.show()
+
+print(new_df.head())
