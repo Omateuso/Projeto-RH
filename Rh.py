@@ -232,7 +232,7 @@ ax = sns.countplot(data = df, x = 'target')
 plt.title("Distribuição da Variável Alvo", fontsize = 15)
 for p in ax.patches:
     ax.annotate(f'\n{p.get_height()}',
-                (p.get_x()+0.4,
+                (p.get_x() + 0.4,
                  p.get_height()),
                  ha = 'center',
                  va = 'top',
@@ -269,7 +269,7 @@ plt.xticks(rotation = 45)
 plt.title("Plot de Valores Ausentes", fontsize = 15)
 
 for p in ax.patches:
-    ax.annotate(f'\n{p.get_height()}', (p.get_x()+0.4, (p.get_height())), ha = 'center', color = 'black', size = 11)
+    ax.annotate(f'\n{p.get_height()}', (p.get_x() + 0.4, (p.get_height())), ha = 'center', color = 'black', size = 11)
 plt.show()
 
 sns.countplot(data = new_df.fillna('NaN'), x = 'major_discipline', alpha = 0.7, edgecolor = 'black')
@@ -277,7 +277,7 @@ plt.xticks(rotation = 45)
 bound = ax.get_xbound()
 ax = plt.gca()
 for p in ax.patches:
-    ax.annotate(f'\n{p.get_height()}', (p.get_x()+0.4, p.get_height()), ha = 'center', color = 'black', size = 10)
+    ax.annotate(f'\n{p.get_height()}', (p.get_x() + 0.4, p.get_height()), ha = 'center', color = 'black', size = 10)
 plt.title("Valores Ausentes da Variável major_discipline Antes do Processamento\n", fontsize = 15)
 plt.show()
 
@@ -306,7 +306,7 @@ plt.xticks(rotation=45)
 bound=ax.get_xbound()
 ax=plt.gca()
 for p in ax.patches:
-    ax.annotate(f'\n{p.get_height()}', (p.get_x()+0.4, p.get_height()), ha = 'center', color = 'black', size = 10)
+    ax.annotate(f'\n{p.get_height()}', (p.get_x() + 0.4, p.get_height()), ha = 'center', color = 'black', size = 10)
 plt.title(" Valores Ausentes da Variável major_discipline Após o Processamento\n", fontsize = 15)
 plt.show()
 
@@ -351,7 +351,7 @@ plt.xticks()
 bound=ax.get_xbound()
 ax=plt.gca()
 for p in ax.patches:
-    ax.annotate(f'\n{p.get_height()}', (p.get_x()+0.4, p.get_height()), ha = 'center', color = 'black', size = 10)
+    ax.annotate(f'\n{p.get_height()}', (p.get_x() + 0.4, p.get_height()), ha = 'center', color = 'black', size = 10)
 plt.title("Valores Ausentes da Variável enrolled_university Após o Processamento\n", fontsize = 15)
 plt.show()
 
@@ -369,8 +369,8 @@ for i in column_list:
     sns.despine() 
     plt.title(i, fontsize = 15)
     for p in ax.patches:
-        ax.annotate(f'\n{p.get_height()}', (p.get_x()+0.4, p.get_height()), ha = 'center', color = 'black', size = 12)
-    if A >=0:
+        ax.annotate(f'\n{p.get_height()}', (p.get_x() + 0.4, p.get_height()), ha = 'center', color = 'black', size = 12)
+    if A >= 0:
         plt.xticks(rotation = 45)
 plt.show()
 
@@ -392,9 +392,80 @@ for i in column_list:
     sns.despine() 
     plt.title(i, fontsize = 15)
     for p in ax.patches:
-        ax.annotate(f'\n{p.get_height()}', (p.get_x()+0.4, p.get_height()), ha = 'center', color = 'black', size = 12)
-    if A >=0:
+        ax.annotate(f'\n{p.get_height()}', (p.get_x() + 0.4, p.get_height()), ha = 'center', color = 'black', size = 12)
+    if A >= 0:
         plt.xticks(rotation = 45)
 plt.show()
 
 print(new_df.head())
+
+#Variável education_level
+
+sns.countplot(data = new_df.fillna('NaN'), x = 'education_level', alpha = 0.7, edgecolor = 'black')
+sns.despine()
+plt.xticks()
+bound=ax.get_xbound()
+ax=plt.gca()
+for p in ax.patches:
+    ax.annotate(f'\n{p.get_height()}', (p.get_x() + 0.4, p.get_height()), ha = 'center', color = 'black', size = 10)
+plt.title("Valores Ausentes da Variável education_level Antes do Processamento\n", fontsize = 15)
+plt.show()
+
+# Preparando o índice
+nan_index = new_df[(new_df['education_level'].isna())].index
+
+# Preenchendo valores NaN com 'Other'
+new_df['education_level'][nan_index] = 'Other'
+
+sns.countplot(data = new_df.fillna('NaN'), x = 'education_level', alpha = 0.7, edgecolor = 'black')
+sns.despine()
+plt.xticks()
+bound=ax.get_xbound()
+ax=plt.gca()
+for p in ax.patches:
+    ax.annotate(f'\n{p.get_height()}', (p.get_x() + 0.4, p.get_height()), ha = 'center', color = 'black', size = 10)
+plt.title("Valores Ausentes da Variável education_level Após do Processamento\n", fontsize = 15)
+plt.show()
+
+print(new_df.head())
+print(new_df.info())
+new_df['experience'].value_counts(dropna = False)
+
+# Percentual de valores ausentes
+percent_missing = new_df.isnull().sum() / len(new_df) * 100
+percent_missing
+new_df['experience'].isnull().sum()
+
+print(new_df.shape)
+new_df = new_df.dropna()
+print(new_df.shape)
+
+percent_missing = new_df.isnull().sum() * 100 / len(new_df)
+percent_missing
+
+# Valores ausentes por coluna
+null_df = new_df.isna().sum().reset_index()
+
+# Figura
+ax = plt.figure(figsize = (15,6))
+
+# Barplot
+ax = sns.barplot(x = null_df['index'], y = null_df[0], palette = 'husl')
+plt.xlabel('Atributos', fontsize = 12)
+plt.ylabel('Contagem de Valores Ausentes', fontsize = 12)
+plt.xticks(rotation = 45)
+plt.title("Plot de Valores Ausentes", fontsize = 15)
+
+for p in ax.patches:
+    ax.annotate(f'\n{p.get_height()}', (p.get_x() + 0.4, (p.get_height())), ha = 'center', color = 'black', size = 11)
+plt.show()
+
+print(new_df.head())
+
+# Ajustando os dados
+new_df['enrolled_university'] = new_df['enrolled_university'].replace('no_enrollment', 'No enrollment')
+
+print(new_df.head())
+
+x = new_df.drop(columns = ['target'])
+y = new_df['target']
